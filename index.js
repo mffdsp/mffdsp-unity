@@ -1,6 +1,5 @@
-const io = require('socket.io');
+const server = require('socket.io')(process.env.PORT || 52300);
 
-const server = io(process.env.PORT || 3000);
 
 //Classes
 const Player = require('./Classes/Player');
@@ -13,8 +12,6 @@ console.log('Server ok');
 
 server.on('connection', function(socket){
     console.log('conection sucessfull');
-
-  
 
     //crio
     const player = new Player();
@@ -36,12 +33,12 @@ server.on('connection', function(socket){
         }
     }
 
-    socket.on('updatePosition', function(data){
-        console.log(data);
-        player.position.x = data.position.x;
-        player.position.y = data.position.y;
-        
-        socket.broadcast.emit('updatePosition', player);
+    socket.on('updatePos', function(data){
+
+        player.position.x = data.position.x/10000;
+        player.position.y = data.position.y/10000;
+        console.log(player);
+        socket.broadcast.emit("updatePosition", player);
     });
 
     socket.on('disconnect', function(){
